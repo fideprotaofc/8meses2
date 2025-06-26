@@ -11,6 +11,102 @@
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Great+Vibes&display=swap" rel="stylesheet"/>
   
   <style>
+
+<!-- Áudio player (invisível) -->
+<audio id="audio-player" src="music.mp3" loop></audio>
+
+<!-- Botão principal -->
+<button id="main-button" aria-label="Abrir menu de música" title="Abrir menu de música">
+  <i class="fas fa-pause"></i>
+</button>
+
+<!-- Menu flutuante -->
+<div id="menu" aria-label="Menu de controle de música" role="menu" aria-hidden="true">
+  <button class="menu-button" id="prev-button" aria-label="Música anterior" title="Música anterior">
+    <i class="fas fa-backward"></i>
+  </button>
+  <button class="menu-button" id="play-pause-button" aria-label="Pausar música" title="Pausar música">
+    <i class="fas fa-pause"></i>
+  </button>
+  <button class="menu-button" id="next-button" aria-label="Próxima música" title="Próxima música">
+    <i class="fas fa-forward"></i>
+  </button>
+</div>
+<script>
+  const audio = document.getElementById('audio-player');
+  const mainButton = document.getElementById('main-button');
+  const menu = document.getElementById('menu');
+  const playPauseButton = document.getElementById('play-pause-button');
+  const prevButton = document.getElementById('prev-button');
+  const nextButton = document.getElementById('next-button');
+
+  const playlist = [
+    'music.mp3',
+    'music2.mp3',
+    'music3.mp3'
+  ];
+  let currentIndex = 0;
+
+  function loadAndPlay(index) {
+    if (index < 0) index = playlist.length - 1;
+    if (index >= playlist.length) index = 0;
+    currentIndex = index;
+    audio.src = playlist[currentIndex];
+    audio.play();
+    updatePlayPauseIcons(true);
+  }
+
+  function updatePlayPauseIcons(isPlaying) {
+    mainButton.innerHTML = isPlaying ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>';
+    playPauseButton.innerHTML = isPlaying ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>';
+    playPauseButton.setAttribute('aria-label', isPlaying ? 'Pausar música' : 'Tocar música');
+    playPauseButton.setAttribute('title', isPlaying ? 'Pausar música' : 'Tocar música');
+  }
+
+  window.addEventListener('load', () => {
+    audio.play().catch(() => {
+      updatePlayPauseIcons(false);
+    });
+    updatePlayPauseIcons(true);
+  });
+
+  mainButton.addEventListener('click', () => {
+    menu.classList.toggle('open');
+  });
+
+  mainButton.addEventListener('dblclick', () => {
+    togglePlayPause();
+  });
+
+  playPauseButton.addEventListener('click', togglePlayPause);
+
+  function togglePlayPause() {
+    if (audio.paused) {
+      audio.play();
+      updatePlayPauseIcons(true);
+    } else {
+      audio.pause();
+      updatePlayPauseIcons(false);
+    }
+  }
+
+  prevButton.addEventListener('click', () => {
+    loadAndPlay(currentIndex - 1);
+  });
+
+  nextButton.addEventListener('click', () => {
+    loadAndPlay(currentIndex + 1);
+  });
+
+  audio.addEventListener('ended', () => {
+    loadAndPlay(currentIndex + 1);
+  });
+
+  audio.addEventListener('play', () => updatePlayPauseIcons(true));
+  audio.addEventListener('pause', () => updatePlayPauseIcons(false));
+</script>
+
+
     body {
       font-family: 'Open Sans', sans-serif; /* corpo legível */
       background: #fff0f6;
@@ -82,6 +178,68 @@
       border-radius: 10px;
       border: 2px solid #fff0f6;
     }
+/* Estilo do menu flutuante */
+  #menu {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(20px);
+    transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+  }
+  #menu.open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+  .menu-button {
+    background-color: #111;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+    color: white;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.25s ease, box-shadow 0.25s ease;
+  }
+  .menu-button:hover {
+    background-color: #222;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.9);
+  }
+  /* Estilo do botão principal */
+  #main-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #ec4899;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1001;
+    transition: background-color 0.3s ease;
+  }
+  #main-button:hover {
+    background-color: #db2777;
+  }
   </style>
  </head>
  <body class="relative bg-gradient-to-b from-pink-50 via-purple-50 to-pink-50 min-h-screen flex flex-col items-center justify-center text-pink-700">
@@ -382,15 +540,6 @@ Completamente, infinitamente, apaixonadamente e eternamente seu💌❤
  <!-- Audio element -->
 <audio id="bgMusic" loop preload="auto" src="https://www.dropbox.com/scl/fi/usjft1lwvh8cwwm081ji9/The-Weeknd-Die-For-You.mp3?rlkey=rweejz3pis6c1rteciv66coyq&raw=1"></audio>
 
-<button id="startBtn">Iniciar Música 1</button>
-<button id="switchBtn" class="hidden">Tocar Música 2</button>
-
-<div id="welcome">
-  Bem-vindo! Clique para começar.
-</div>
-<div id="mainContent" class="hidden">
-  Conteúdo principal aqui.
-</div>
 
 <script>
   const startBtn = document.getElementById('startBtn');
@@ -426,6 +575,7 @@ Completamente, infinitamente, apaixonadamente e eternamente seu💌❤
       alert('Não foi possível tocar a música automaticamente. Por favor, toque manualmente.');
     });
   });
+
 </script>
 
 <style>
