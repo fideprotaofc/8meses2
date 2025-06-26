@@ -373,26 +373,57 @@ Completamente, infinitamente, apaixonadamente e eternamente seu💌❤
    </article>
    
 
-  <!-- Audio element -->
-  <audio id="bgMusic" loop preload="auto" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+ <!-- Audio element -->
+<audio id="bgMusic" loop preload="auto" src="https://www.dropbox.com/scl/fi/usjft1lwvh8cwwm081ji9/The-Weeknd-Die-For-You.mp3?rlkey=rweejz3pis6c1rteciv66coyq&raw=1"></audio>
 
-  <script>
-    const startBtn = document.getElementById('startBtn');
-    const welcomeSection = document.getElementById('welcome');
-    const mainContent = document.getElementById('mainContent');
-    const bgMusic = document.getElementById('bgMusic');
+<button id="startBtn">Iniciar Música 1</button>
+<button id="switchBtn" class="hidden">Tocar Música 2</button>
 
-    startBtn.addEventListener('click', () => {
-      // Esconde a tela inicial
-      welcomeSection.classList.add('hidden');
-      // Mostra o conteúdo principal
-      mainContent.classList.remove('hidden');
-      // Tenta tocar a música
-      bgMusic.play().catch(error => {
-        console.error('Erro ao tentar tocar a música:', error);
-        alert('Não foi possível tocar a música automaticamente. Por favor, toque manualmente.');
-      });
+<div id="welcome">
+  Bem-vindo! Clique para começar.
+</div>
+<div id="mainContent" class="hidden">
+  Conteúdo principal aqui.
+</div>
+
+<script>
+  const startBtn = document.getElementById('startBtn');
+  const switchBtn = document.getElementById('switchBtn');
+  const welcomeSection = document.getElementById('welcome');
+  const mainContent = document.getElementById('mainContent');
+  const bgMusic = document.getElementById('bgMusic');
+
+  // URLs das músicas
+  const music1 = "https://www.dropbox.com/scl/fi/usjft1lwvh8cwwm081ji9/The-Weeknd-Die-For-You.mp3?rlkey=rweejz3pis6c1rteciv66coyq&raw=1";
+  const music2 = "https://www.dropbox.com/scl/fi/wp9ra86ktzb8b1w700sn8/Die-With-A-Smile-Raag.Fm.mp3?rlkey=j9aqyq51yt0mkj1ylemt620yp&raw=1";
+
+  startBtn.addEventListener('click', () => {
+    welcomeSection.classList.add('hidden');
+    mainContent.classList.remove('hidden');
+    bgMusic.src = music1;
+    bgMusic.play().catch(error => {
+      console.error('Erro ao tentar tocar a música:', error);
+      alert('Não foi possível tocar a música automaticamente. Por favor, toque manualmente.');
     });
-  </script>
- </body>
-</html>
+    switchBtn.classList.remove('hidden');
+  });
+
+  switchBtn.addEventListener('click', () => {
+    // Troca para a segunda música
+    if(bgMusic.src.includes("Die-For-You")) {
+      bgMusic.src = music2;
+    } else {
+      bgMusic.src = music1;
+    }
+    bgMusic.play().catch(error => {
+      console.error('Erro ao tentar tocar a música:', error);
+      alert('Não foi possível tocar a música automaticamente. Por favor, toque manualmente.');
+    });
+  });
+</script>
+
+<style>
+  .hidden {
+    display: none;
+  }
+</style>
